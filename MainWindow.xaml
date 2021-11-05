@@ -1,0 +1,300 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:ruler="clr-namespace:RulerControl;assembly=RulerControl"
+        xmlns:local="clr-namespace:WpfApp5"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="600"
+        Width="1024"
+        Left="0"
+        Top="0"
+        WindowStartupLocation="Manual">
+    <Window.Resources>
+        <SolidColorBrush x:Key="LightGreyBrush"
+		                 Color="LightGray"/>
+        <SolidColorBrush x:Key="MidGreyBrush"
+		                 Color="MediumBlue"/>
+        <SolidColorBrush x:Key="DarkGreyBrush"
+		                 Color="Gray"/>
+        <Style TargetType="{x:Type Button}"
+		       x:Key="3DButtonStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Border x:Name="TopLeftBorder"
+							        BorderBrush="{StaticResource LightGreyBrush}"
+							        BorderThickness="2,2,0,0"/>
+                            <Border x:Name="BottomRightBorder"
+							        BorderBrush="{StaticResource DarkGreyBrush}"
+							        BorderThickness="0,0,2,2"/>
+                            <Grid Margin="3">
+                                <Grid.Background>
+                                    <LinearGradientBrush EndPoint="0.5,1"
+									                     StartPoint="0.5,0">
+                                        <GradientStop Color="AliceBlue"
+										              Offset="0"/>
+                                        <GradientStop Color="LightBlue"
+										              Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed"
+							         Value="True">
+                                <Setter TargetName="TopLeftBorder"
+								        Property="BorderBrush"
+								        Value="{StaticResource DarkGreyBrush}"/>
+                                <Setter TargetName="BottomRightBorder"
+								        Property="BorderBrush"
+								        Value="{StaticResource LightGreyBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="MainGrid"
+	      Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Menu IsMainMenu="True"
+		      Grid.Row="0"
+		      Grid.ColumnSpan="2">
+            <MenuItem Header="_File">
+                <MenuItem x:Name="miLoadXml" Header="Load From Xml" Click="miLoadXml_Click">
+                    <MenuItem.Icon>
+                        <Frame Source="Resources/Folder_16x.xaml"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="miSaveAsXml" Header="Save to Xml" Click="miSaveAsXml_Click">
+                    <MenuItem.Icon>
+                        <Frame Source="Resources/SaveAs_16x.xaml"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem x:Name="miExit" Header="Exit" Click="miExit_Click">
+                    <MenuItem.Icon>
+                        <Frame Source="Resources/Close_16x.xaml"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem x:Name="miShowBox"
+				          Header="Show Bounding Box"
+				          IsCheckable="True"
+				          IsChecked="True"
+				          Click="miShowBox_Click"/>
+                <MenuItem x:Name="miShowCenter"
+				          Header="Show Center Marker"
+				          IsCheckable="True"
+				          IsChecked="True"
+				          Click="miShowCenter_Click"/>
+                <MenuItem x:Name="miShowLines"
+				          Header="Show Interior Lines"
+				          IsCheckable="True"
+				          IsChecked="True"
+				          Click="miShowLines_Click"/>
+                <MenuItem x:Name="miShowValueOnRulers"
+                          Header="Show Moving Point Values on Rulers"
+                          IsCheckable="true"
+                          IsChecked="True"
+                          Click="miShowValueOnRulers_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem x:Name="miAbout"
+				          Header="_About"
+				          Click="miAbout_Click"/>
+            </MenuItem>
+        </Menu>
+        <WrapPanel Grid.Row="1"
+		           Grid.ColumnSpan="2"
+		           Orientation="Horizontal">
+            <local:ToolBarEx Loaded="ToolBarEx_Loaded">
+                <Separator/>
+                <Button x:Name="btnNewPolygon"
+				        Content="New Polygon"
+				        Style="{StaticResource 3DButtonStyle}"
+				        Click="btnNewPolygon_Click"/>
+                <Separator/>
+                <Button x:Name="btnSaveCanvas"
+				        Content="Save Canvas Image"
+				        Style="{StaticResource 3DButtonStyle}"
+				        Click="btnSaveCanvas_Click"/>
+                <Separator/>
+            </local:ToolBarEx>
+            <local:ToolBarEx Loaded="ToolBarEx_Loaded"
+			                 VerticalContentAlignment="Center"
+			                 Height="30">
+                <Label Content="Rotation Angle"
+				       VerticalContentAlignment="Center"/>
+                <local:ComboBoxEx x:Name="cbRotationAngle"
+				                  MinWidth="100"
+				                  IsEditable="True"
+				                  IsReadOnly="False"
+				                  SelectedIndex="6"
+				                  Loaded="cbRotationAngle_Loaded"
+				                  SelectionChanged="cbRotationAngle_SelectionChanged"/>
+            </local:ToolBarEx>
+        </WrapPanel>
+        <Grid x:Name="CanvasGrid"
+		      Grid.Row="2"
+		      Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ruler:RulerControl x:Name="rlrVertical" Width="25"
+			                    Grid.Column="0"
+			                    Grid.Row="1"
+			                    Orientation="Vertical"
+			                    Background="Silver"
+			                    Foreground="Black"/>
+            <Canvas x:Name="cnv"
+			        Grid.Row="1"
+			        Grid.Column="1"
+			        Background="AliceBlue"
+			        MouseLeftButtonDown="cnv_MouseLeftButtonDown"
+			        MouseLeftButtonUp="cnv_MouseLeftButtonUp"
+			        MouseRightButtonDown="cnv_MouseRightButtonDown"
+			        MouseRightButtonUp="cnv_MouseRightButtonUp"
+			        MouseMove="cnv_MouseMove"
+			        MouseWheel="cnv_MouseWheel"
+			        SizeChanged="cnv_SizeChanged"
+			        Loaded="cnv_Loaded">
+                <Polygon Name="PBox" x:Uid="PBox" Tag="PBox"
+				         Stroke="Black"
+				         Fill="Transparent"
+				         StrokeThickness="1"
+				         StrokeDashArray="0.5 0.5"/>
+                <Polygon Name="PGon" x:Uid="PGon" Tag="PGon"
+				         Stroke="Blue"
+				         StrokeThickness="1"
+				         StrokeLineJoin="Round"
+				         Fill="LightBlue"/>
+                <Polyline Name="PLines" x:Uid="PLines" Tag="PLines"
+				          Fill="Transparent"
+				          Stroke="Green"
+				          StrokeThickness="1"
+				          StrokeLineJoin="Round"
+				          StrokeDashArray="0.5 0.5"/>
+                <Ellipse Name="PVertex" x:Uid="PVertex" Tag="PVertex"
+				         Visibility="Hidden"
+				         Stroke="Black"
+				         StrokeThickness="1"
+				         Fill="Transparent"
+				         Width="11"
+				         Height="11"/>
+                <Polygon Name="PCentroid" x:Uid="PCentroid" Tag="PCentroid"
+				         Stroke="Black"
+				         StrokeThickness="1"
+				         Fill="Red"/>
+
+            </Canvas>
+            <ruler:RulerControl x:Name="rlrHorizontal" Height="25"
+			                    Grid.Column="1"
+			                    Grid.Row="0"
+			                    Orientation="Horizontal"
+			                    Background="Silver"
+			                    Foreground="Black"/>
+
+            <Grid Grid.Row="1" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <GroupBox Header="Colors" Margin="4">
+                        <GroupItem Margin="4">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Outline"
+							           Width="60"
+							           VerticalAlignment="Center"
+							           FontSize="10"/>
+                                    <local:ColorComboBox x:Name="cbOutline" Width="200"
+							                  SelectionChanged="cbOutline_SelectionChanged"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Interior"
+							           Width="60"
+							           VerticalAlignment="Center"
+							           FontSize="10"/>
+                                    <local:ColorComboBox x:Name="cbInterior" Width="200"
+							                  SelectionChanged="cbInterior_SelectionChanged"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Box"
+							           Width="60"
+							           VerticalAlignment="Center"
+							           FontSize="10"/>
+                                    <local:ColorComboBox x:Name="cbBox" Width="200"
+							                  SelectionChanged="cbBox_SelectionChanged"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Lines"
+							           Width="60"
+							           VerticalAlignment="Center"
+							           FontSize="10"/>
+                                    <local:ColorComboBox x:Name="cbLines" Width="200"
+							                  SelectionChanged="cbLines_SelectionChanged"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Centroid"
+							           Width="60"
+							           VerticalAlignment="Center"
+							           FontSize="10"/>
+                                    <local:ColorComboBox x:Name="cbCentroid" Width="200"
+							                  SelectionChanged="cbCentroid_SelectionChanged"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Canvas"
+							           Width="60"
+							           VerticalAlignment="Center"
+							           FontSize="10"/>
+                                    <local:ColorComboBox x:Name="cbCanvas" Width="200"
+							                  SelectionChanged="cbCanvas_SelectionChanged"/>
+                                </StackPanel>
+                                <Separator/>
+                                <Button x:Name="btnResetColors" Width="70" HorizontalAlignment="Left" Content="Reset Colors" Click="btnResetColors_Click">
+                                    
+                                </Button>
+                            </StackPanel>
+                        </GroupItem>
+                       
+                    </GroupBox>
+                   
+                </StackPanel>
+                <ScrollViewer Grid.Row="1">
+                    <TextBlock x:Name="TB" Grid.Row="1"
+				           Background="AntiqueWhite"
+				           Padding="10"/>
+                </ScrollViewer>
+            </Grid>
+
+        </Grid>
+        <StatusBar Grid.Row="3"
+		           Grid.ColumnSpan="2">
+            <StatusBarItem>
+                <TextBlock/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
