@@ -1,5 +1,5 @@
 # PolygonCreator
-demo program to illustrate drawing polygons by the click of a mouse, with lots of bells and whistles. Change colors, drag Vertices, move, resize, rotate, save as png or xml files. etc.
+Demo program to illustrate drawing polygons by the click of a mouse, with lots of bells and whistles. Change colors, drag Vertices, move, resize, rotate, save as png or xml files. etc.
 
 Draw polygon by clicking points with the left mouse button. When done, a right click will "finalize" or "complete" the polygon. 
 Then you can move it by dragging with the left mouse button. 
