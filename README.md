@@ -24,3 +24,5 @@ There are also handy vertical and horizontal rulers which display the mouse posi
 I don't know if the program has much practical value. But I wanted to explore polygons and this is the result.
 
 Enjoy! Use the code however you like.
+
+https://user-images.githubusercontent.com/12937219/142449844-fcc2eb86-4aa1-4723-a7cf-73c932edda45.mp4
